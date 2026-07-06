@@ -1,7 +1,6 @@
-# 🛡️ Network Traffic Analyzer
+#  Network Traffic Analyzer
 
-**Author:** Sana Simran
-**GitHub:** [sanasimran1403-jpg](https://github.com/sanasimran1403-jpg)
+A Python-based PCAP threat analysis tool that detects port scans, ARP spoofing, suspicious DNS queries, ICMP floods, and possible data exfiltration — and generates a branded, dashboard-style PDF threat report.
 
 ---
 
@@ -33,24 +32,21 @@ All thresholds are configurable constants at the top of `analyzer.py`.
 
 ##  Validation — Tested Against Real Attack Traffic
 
-Rather than only testing on a benign sample capture, this tool was validated against live attacks generated from a Kali Linux VM against a Windows Server 2019 Domain Controller in an isolated host-only lab network (`192.168.56.0/24`).
+Rather than only testing on a sample capture, this tool was validated against live attacks generated from a Kali Linux VM against a Windows Server 2019 Domain Controller in an isolated host-only lab network.
 
 ### Test 1 — Nmap Port Scan
 ```bash
-nmap -p 1-1000 -T4 192.168.56.10
+nmap -p 1-1000 -T4 <target-ip>
 ```
-**Result:** ✅ Detected — `HIGH` severity, 1000 unique ports scanned from `192.168.56.102` against the DC, SYN count logged, all 1000 target ports listed in the report.
+**Result:** ✅ Detected — `HIGH` severity, 1000 unique ports scanned from the attacker host against the DC, SYN count logged, all 1000 target ports listed in the report.
 
 ### Test 2 — ARP Spoofing (arpspoof)
 ```bash
-arpspoof -i eth0 -t 192.168.56.10 192.168.56.1
+arpspoof -i eth0 -t <target-ip> <gateway-ip>
 ```
-**Result:** ✅ Detected — `CRITICAL` severity, gateway IP `192.168.56.1` flagged as claimed by 2 different MAC addresses (the attacker's spoofed MAC and the legitimate gateway MAC).
+**Result:** ✅ Detected — `CRITICAL` severity, the gateway IP flagged as claimed by 2 different MAC addresses (the attacker's spoofed MAC and the legitimate gateway MAC).
 
-### Test 3 — Benign Traffic (control test)
-A standard, non-malicious sample capture was also run through the tool to confirm it does **not** produce false positives on clean traffic — result: `CLEAN`, 0 findings.
-
-This three-way test (attack / attack / clean) demonstrates the detectors work correctly in both directions — flagging real threats and staying silent on normal traffic.
+Both tests confirm the detectors correctly flag real, live attack traffic rather than only pattern-matching on synthetic data.
 
 ---
 
@@ -99,7 +95,7 @@ python analyzer.py <path-to-pcap> -o report.pdf -j
 
 ### Example
 ```bash
-python analyzer.py sample.pcap -o report.pdf -j
+python analyzer.py capture.pcap -o report.pdf -j
 ```
 
 ---
@@ -109,17 +105,17 @@ python analyzer.py sample.pcap -o report.pdf -j
 ```
 network-traffic-analyzer/
 ├── analyzer.py              # main tool
-├── watermark_logo.png       # branding asset for PDF reports
 ├── requirements.txt
+├── LICENSE
 ├── samples/
-│   ├── sample.pcap                  # benign control capture
 │   ├── portscan_attack.pcap         # real nmap scan capture
 │   ├── arpspoof_attack.pcap         # real arpspoof capture
-│   ├── clean_report.pdf
 │   ├── portscan_report.pdf
 │   └── arpspoof_report.pdf
 └── README.md
 ```
+
+> **Note:** The PDF report includes a subtle branded watermark. The watermark image itself (`watermark_logo.png`) is kept locally and is **not committed to this repo**. `analyzer.py` checks for its presence at runtime — if the file isn't found, the report simply generates without the watermark, no error thrown.
 
 ---
 
@@ -135,4 +131,12 @@ network-traffic-analyzer/
 
 MIT License — see `LICENSE` file.
 
-*For educational and authorized security assessment purposes only.*
+---
+
+## Author
+
+**Sana Simran**
+
+- GitHub: [@sanasimran1403-jpg](https://github.com/sanasimran1403-jpg)
+
+*Disclaimer: All attack traffic was generated and tested in an isolated local lab environment for educational purposes. Never run scanning or spoofing tools against networks or systems you do not own or have explicit permission to test.*
