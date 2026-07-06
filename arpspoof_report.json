@@ -1,0 +1,26 @@
+{
+  "stats": {
+    "total": 21,
+    "tcp": 0,
+    "udp": 1,
+    "icmp": 0,
+    "arp": 20,
+    "dns": 0,
+    "other": 0,
+    "top_src": {
+      "192.168.56.102": 1
+    },
+    "top_dst": {
+      "192.168.56.1": 1
+    }
+  },
+  "findings": [
+    {
+      "type": "ARP Spoofing",
+      "severity": "CRITICAL",
+      "src_ip": "192.168.56.1",
+      "detail": "IP 192.168.56.1 claimed by 2 different MACs: 0a:00:27:00:00:11, 08:00:27:4a:af:fb",
+      "ports": []
+    }
+  ]
+}

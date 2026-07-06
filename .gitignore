@@ -1,0 +1,15 @@
+# Branding asset — kept local only, not published
+watermark_logo.png
+logo.png
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Generated output (keep only curated samples in samples/)
+report.pdf
+report.json
+*.report.pdf
+*.report.json
